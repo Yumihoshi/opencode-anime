@@ -4,8 +4,7 @@
 // @version      1.0.0
 // @description  opencode Web UI 二次元主题配套脚本：每次加载页面时为背景图注入带新时间戳的 URL，绕过 t.alcy.cc 的 30 天缓存，保证刷新即换图。配合 Stylus 样式 opencode-anime.user.css 使用。
 // @author       you
-// @match        http://127.0.0.1:*/*
-// @match        http://localhost:*/*
+// @match        http://127.0.0.1:4096/*
 // @run-at       document-start
 // @grant        none
 // ==/UserScript==
