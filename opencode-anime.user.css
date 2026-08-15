@@ -416,3 +416,105 @@ blockquote {
   border-left: 3px solid #FF79C6;
   background: rgba(255, 121, 198, 0.07);
 }
+
+/* ---------- 12. 发送按钮与开关美化 ---------- */
+
+/* 12.1 发送按钮（prompt-submit）
+   背景图是内联 style（opencode 组件注入的深色扁平底），
+   内联样式优先级最高，必须用 !important 才能压过；
+   图标精灵里箭头是 stroke="currentColor"，所以只改按钮的
+   color 就能给箭头换色，不需要动 svg */
+button[data-action="prompt-submit"] {
+  /* 紫→粉渐变胶囊 + 紫色微光；渐变端点走主题变量，改调参区即联动 */
+  background-image: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;
+  border-radius: 9999px !important;   /* 直角 → 圆胶囊（二次元聊天感） */
+  color: var(--foreground) !important;/* 箭头 = 亮白，继承 currentColor */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), /* 顶部玻璃高光 */
+              0 0 10px rgba(189, 147, 249, 0.35);      /* 紫色光晕 */
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+button[data-action="prompt-submit"]:hover:not(:disabled) {
+  /* 渐变提亮 + 粉色光晕增强 + 轻微上浮；渐变本身不可插值，瞬时切换，光晕与位移平滑 */
+  background-image: linear-gradient(135deg, #D3B9FF 0%, #FF9BD9 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30),
+              0 0 14px rgba(255, 121, 198, 0.55);
+  transform: translateY(-1px);
+}
+button[data-action="prompt-submit"]:disabled {
+  box-shadow: none !important;  /* 禁用：去掉光晕，仅保留渐变残影 */
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* 12.2 设置面板开关（switch）
+   真实 DOM：input（视觉隐藏）紧邻 control，故可用
+   input:checked + control 兄弟选择器；再并列一条 :has() 兜底，
+   防止其他版本 DOM 层级变化时规则失效 */
+[data-component="switch"] [data-slot="switch-control"] {
+  position: relative;              /* 供 ::before 渐变层与 thumb 定位 */
+  width: 24px !important;          /* 尺寸写死，保证 translateX(8px) 几何成立 */
+  height: 16px !important;
+  padding: 2px !important;         /* 内容区 20×12，thumb 12px 恰好放下 */
+  border-radius: 9999px !important;/* 方角 → 玻璃胶囊 */
+  /* 未选中轨道：深色半透明玻璃底 + 细紫边 + 内凹；背景用 !important
+     压过组件自带的蓝灰底渐变（background 简写一并清掉它的渐变层） */
+  background: rgba(40, 42, 54, 0.90) !important;
+  box-shadow: inset 0 0 0 1px rgba(189, 147, 249, 0.22),
+              inset 0 1px 2px rgba(0, 0, 0, 0.30),
+              inset 0 -1px 0 rgba(255, 255, 255, 0.07),
+              0 0 0 rgba(189, 147, 249, 0); /* 光晕从透明起值，选中后平滑增强 */
+  transition: box-shadow 0.2s ease;
+}
+/* 选中渐变层：background 渐变无法平滑过渡，叠一层透明渐变随
+   opacity 淡入，才是真正连续的“轨道变色”动画 */
+[data-component="switch"] [data-slot="switch-control"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: inset 0 0 0 1px rgba(255, 121, 198, 0.40); /* 选中细粉边 */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+/* 选中态轨道：渐变淡入 + 紫色光晕亮起 */
+input[role="switch"]:checked + [data-slot="switch-control"],
+[data-component="switch"]:has(input:checked) [data-slot="switch-control"] {
+  box-shadow: inset 0 0 0 1px rgba(255, 121, 198, 0.40),
+              inset 0 1px 2px rgba(0, 0, 0, 0.20),
+              inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+              0 0 8px rgba(189, 147, 249, 0.45);
+}
+input[role="switch"]:checked + [data-slot="switch-control"]::before,
+[data-component="switch"]:has(input:checked) [data-slot="switch-control"]::before {
+  opacity: 1;
+}
+/* 圆钮：未选中是浅灰紫小圆点，选中变白色、带柔白光晕；
+   两个状态都用纯色 background（简写清掉组件的渐变层），
+   background-color 才能平滑插值 */
+[data-component="switch"] [data-slot="switch-thumb"] {
+  position: relative;   /* 盖在渐变层之上 */
+  z-index: 1;
+  width: 12px !important;
+  height: 12px !important;
+  /* 第 3 节滚动条规则 [data-slot*="thumb"] 是子串匹配，会命中
+     switch-thumb 并把宽度钳到 4px，这里显式解除钳制 */
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 9999px !important;
+  background: #A9AFC9 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transform: translateX(0);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+input[role="switch"]:checked + [data-slot="switch-control"] [data-slot="switch-thumb"],
+[data-component="switch"]:has(input:checked) [data-slot="switch-thumb"] {
+  transform: translateX(8px);              /* 内容区 20px - 圆钮 12px = 8px */
+  background: var(--foreground) !important;/* 白色圆钮 */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.20),
+              0 0 6px rgba(248, 248, 242, 0.60);
+}
+/* 禁用：整体减淡 */
+[data-component="switch"][data-disabled] [data-slot="switch-control"] {
+  opacity: 0.5;
+}

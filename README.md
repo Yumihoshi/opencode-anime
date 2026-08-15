@@ -32,6 +32,8 @@ Pure CSS skin injected via Stylus, paired with a Tampermonkey script that append
 - 🌈 **Diff highlighting**: fixed diff-line colors inside shadow DOM (added green `#50FA7B` / removed red `#FF5555`, VS Code style)
 - 💬 **Message distinction**: user messages with purple outline / assistant with dark outline
 - ⌨️ **Neon input focus**: semi-transparent glass base + pink glow on focus, placeholder brightened separately
+- 🚀 **Purple-pink gradient send button**: flat right angle → gradient capsule with glass highlight and glow, brightens and lifts on hover
+- 🔘 **Glassmorphism toggle switch**: settings switches restyled as purple-pink glass capsules, gradient fades in when checked with a sliding thumb animation
 
 ## 📦 Files
 
