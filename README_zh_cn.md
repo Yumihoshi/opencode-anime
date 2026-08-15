@@ -8,11 +8,20 @@
 ![Stylus](https://img.shields.io/badge/Stylus-%23333333?style=for-the-badge&logo=stylus&logoColor=white)
 ![Tampermonkey](https://img.shields.io/badge/Tampermonkey-%2300485B?style=for-the-badge&logo=tampermonkey&logoColor=white)
 
+> ⚠️ **适用范围**：本项目只适用于通过 `opencode web` 命令启动的 Web UI 版本美化，不适用于终端 CLI 等其他使用方式。
+>
 > 自用的 opencode Web UI 二次元主题 —— **Dracula 紫粉霓虹配色 + 随机二次元壁纸背景**。
 
 用 Stylus 注入纯 CSS 换肤，配合 Tampermonkey 脚本注入带时间戳的随机背景图，实现刷新即换图。仅覆盖 CSS 变量与稳定 `data-*` 属性，**不改布局结构、不隐藏任何功能元素**。
 
 [English](./README.md) | **中文**
+
+## 📸 预览
+
+<p align="center">
+  <img src="img/home.png" alt="首页预览" width="49%" />
+  <img src="img/session.png" alt="对话预览" width="49%" />
+</p>
 
 ## ✨ 特性
 
@@ -34,15 +43,25 @@
 ## 🍜 食用指南
 
 > 前置：已在本机运行 opencode Web UI（访问地址形如 `http://127.0.0.1:端口`），且使用 Chrome / Edge / Firefox 等支持扩展的浏览器。
+>
+> **重要：本主题基于深色模式 + 官方 TokyoNight 主题改造，请先在 opencode 设置中把主题切换为官方 TokyoNight 并选择深色模式**，否则样式可能显示异常。
+
+<p align="center">
+  <img src="img/setting.png" alt="主题与深色模式设置" width="80%" />
+</p>
 
 ### 第一步：安装 Stylus 主题
 
-1. 安装 [Stylus](https://add0n.com/stylus.html) 浏览器扩展；
+1. 安装 [Stylus](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne) 浏览器扩展；
 2. 点击扩展图标 → **管理** → **新建样式**；
 3. 将 [`opencode-anime.user.css`](opencode-anime.user.css) 的**全部内容**粘贴到编辑器，保存；
-4. 在样式设置页的 **「应用于」** 中添加你 opencode 的访问地址前缀（**端口记得改成你自己的**，例如 opencode 跑在 8765 端口就填 `http://127.0.0.1:8765/*`）：
+4. 在样式设置页中，代码编辑顶部设置前缀 URL（**端口记得改成你自己的**，例如 opencode 跑在 8765 端口就填 `http://127.0.0.1:8765/*`）：
    - `http://127.0.0.1:你的端口/*`
    - `http://localhost:你的端口/*`
+
+   <p align="center">
+     <img src="img/setting2.png" alt="Stylus 应用于配置" width="80%" />
+   </p>
 5. 刷新 opencode 页面，主题即生效。
 
 > [!IMPORTANT]
@@ -84,3 +103,7 @@
 ## 📄 许可证
 
 [MIT](LICENSE) © 2026 绘星tsuki
+
+## 🤖 关于本项目
+
+本项目由 **DeepSeek V4 Flash** 通过 **Vibe Coding** 方式创作（本人负责提需求、验收与微调，AI 负责实现）。欢迎任何人在此基础上自由修改、魔改、扩展，也欢迎提交 Issue 与 PR 一起完善～

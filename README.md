@@ -8,11 +8,20 @@
 ![Stylus](https://img.shields.io/badge/Stylus-%23333333?style=for-the-badge&logo=stylus&logoColor=white)
 ![Tampermonkey](https://img.shields.io/badge/Tampermonkey-%2300485B?style=for-the-badge&logo=tampermonkey&logoColor=white)
 
+> ⚠️ **Scope**: this project only beautifies the Web UI started via the `opencode web` command; it does not apply to the terminal CLI or other usage modes.
+>
 > A self-use anime theme for the opencode Web UI — **Dracula purple/pink neon palette + random anime wallpaper background**.
 
 Pure CSS skin injected via Stylus, paired with a Tampermonkey script that appends a fresh timestamp to the background URL so every page load gets a new image. It only overrides CSS variables and stable `data-*` attributes — **no layout changes, no hidden UI elements**.
 
 **English** | [中文](./README_zh_cn.md)
+
+## 📸 Preview
+
+<p align="center">
+  <img src="img/home.png" alt="Home preview" width="49%" />
+  <img src="img/session.png" alt="Session preview" width="49%" />
+</p>
 
 ## ✨ Features
 
@@ -34,15 +43,25 @@ Pure CSS skin injected via Stylus, paired with a Tampermonkey script that append
 ## 🍜 Getting Started
 
 > Prerequisite: opencode Web UI running locally (e.g. `http://127.0.0.1:port`), and a browser with extension support (Chrome / Edge / Firefox).
+>
+> **Important: this theme is built on dark mode + the official TokyoNight theme. Please switch opencode to the official TokyoNight theme and enable dark mode in settings first**, otherwise the styles may look off.
+
+<p align="center">
+  <img src="img/setting.png" alt="Theme and dark mode settings" width="80%" />
+</p>
 
 ### Step 1: Install the Stylus theme
 
-1. Install the [Stylus](https://add0n.com/stylus.html) browser extension;
+1. Install the [Stylus](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne) browser extension;
 2. Click the extension icon → **Manage** → **Write new style**;
 3. Paste the **entire content** of [`opencode-anime.user.css`](opencode-anime.user.css) into the editor and save;
-4. Under **Applies to** in the style settings, add the URL prefix of your opencode instance (**change the port to your own** — e.g. if opencode runs on port 8765, use `http://127.0.0.1:8765/*`):
+4. In the style settings page, set the URL prefix at the top of the code editor (**change the port to your own** — e.g. if opencode runs on port 8765, use `http://127.0.0.1:8765/*`):
    - `http://127.0.0.1:your-port/*`
    - `http://localhost:your-port/*`
+
+   <p align="center">
+     <img src="img/setting2.png" alt="Stylus Applies to configuration" width="80%" />
+   </p>
 5. Refresh the opencode page — the theme is now active.
 
 > [!IMPORTANT]
@@ -84,3 +103,7 @@ The background image source is [https://t.alcy.cc/pc/](https://t.alcy.cc/pc/): e
 ## 📄 License
 
 [MIT](LICENSE) © 2026 绘星tsuki
+
+## 🤖 About This Project
+
+This project was created with **DeepSeek V4 Flash** through **Vibe Coding** (the author provided requirements, review, and fine-tuning while the AI did the implementation). Everyone is welcome to modify, remix, and extend it freely — Issues and PRs are also appreciated! 🎉
