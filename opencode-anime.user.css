@@ -1,0 +1,418 @@
+/* ================================================================
+   opencode Anime — Dracula 紫粉霓虹主题
+   ----------------------------------------------------------------
+   【重要】本文件是「纯 CSS」，不包含 UserCSS 头部（==UserStyle==）。
+   原因：Stulys 会把含 @match 头部的文件原样注入，浏览器将 @match
+   当无效 at-rule 解析并吞掉后续整个 html[data-theme] 变量块，
+   导致主题变量全部失效。故匹配改由 Stylus 界面的「应用于」配置。
+
+   【安装方式】
+     1. 安装 Stylus 浏览器扩展；
+     2. 扩展菜单 → 管理 → 新建样式 → 将本文件全部内容粘贴保存；
+     3. 在样式设置页的「应用于」中添加两个 URL 前缀：
+        http://127.0.0.1/*  和  http://localhost/*
+     4. 保存，刷新 opencode 页面（http://127.0.0.1:端口）即生效。
+
+   【前置依赖】
+     随机背景图来自 https://t.alcy.cc/pc/（每次请求随机返回一张二次元图）。
+     该图源响应带 30 天缓存（Cache-Control: max-age=2592000），
+     为保证每次刷新换图，请配合安装 Tampermonkey 脚本
+     opencode-anime-bg.user.js（每次加载注入新时间戳参数）。
+     未装脚本时回退为固定 URL 的随机图（30 天内不换图），
+     背景加载失败则自动回退为纯色 #282A36，其余样式不受影响。
+
+   【技术说明】
+     · 本文件为纯 CSS，无需 @preprocessor 预处理器，Stylus 直接注入即可，
+       兼容性最好（若后续想用嵌套语法，可在头部声明 @preprocessor stylus）。
+     · 仅覆盖 CSS 变量与少量稳定 data-* 属性，不改布局结构、
+       不隐藏任何功能元素；!important 仅用于少数覆盖应用自带背景的规则。
+     · 深色模式强制生效（html[data-theme] 统一覆盖变量，忽略明暗值）。
+     · 所有可调参数集中在下方 --anime-* 变量中。
+   ================================================================ */
+
+/* ---------- 1. Dracula 紫粉全局配色（覆盖 @opencode-ai/ui/theme 变量） ---------- */
+html[data-theme] {
+  color-scheme: dark;
+
+  /* ===== 主题调参区：直接改这里 ===== */
+  --anime-bg-opacity: 0.55;   /* 背景图透明度：0.50–0.60 区间；配容器 0.32 时背景约 25% 可见 */
+  --anime-glass-blur: 14px;   /* 毛玻璃模糊半径 */
+  --anime-shell-alpha: 0.32;  /* 内容容器底透明度：0.30–0.38 区间（原 0.40 偏淡，背景约 18% 可见） */
+  --anime-review-alpha: 0.12; /* 审查面板容器叠加 alpha：面板内 4-5 层复用 v2 背景变量，
+                                 需更低值抵消叠加（0.12 时叠加后约 20% 可见） */
+
+  /* Dracula 基底 #282A36 */
+  --background: rgba(40, 42, 54, var(--anime-shell-alpha));
+  --foreground: #F8F8F2;
+  --card: rgba(40, 42, 54, 0.88);
+  --card-foreground: #F8F8F2;
+  --popover: rgba(40, 42, 54, 0.82);
+  --popover-foreground: #F8F8F2;
+  --secondary: #44475A;
+  --secondary-foreground: #F8F8F2;
+  --muted: rgba(68, 71, 90, 0.45);
+  --muted-foreground: #6272A4;   /* 时间戳 / 次要文字 */
+  --border: #44475A;
+  --input: #44475A;
+  --ring: #BD93F9;               /* 全局聚焦环 = 紫 */
+
+  /* 紫粉霓虹强调 */
+  --primary: #BD93F9;            /* 主强调 = 紫 */
+  --primary-foreground: #1E1F29;
+  --accent: #FF79C6;             /* 次强调 = 粉 */
+  --accent-foreground: #1E1F29;
+
+  /* 状态色（Dracula 官方色板） */
+  --success: #50FA7B;
+  --warning: #FFB86C;
+  --error: #FF5555;
+  --danger: #FF5555;
+  --destructive: #FF5555;
+  --destructive-foreground: #F8F8F2;
+  --info: #8BE9FD;
+
+  /* 侧栏变量 */
+  --sidebar: rgba(40, 42, 54, 0.62);
+  --sidebar-foreground: #F8F8F2;
+  --sidebar-primary: #BD93F9;
+  --sidebar-primary-foreground: #1E1F29;
+  --sidebar-accent: rgba(189, 147, 249, 0.14);
+  --sidebar-accent-foreground: #FF79C6;
+  --sidebar-border: rgba(189, 147, 249, 0.20);
+  --sidebar-ring: #BD93F9;
+
+  /* 圆角微调（更二次元的柔和感，不影响布局结构） */
+  --radius: 0.65rem;
+  --radius-sm: 0.4rem;
+  --radius-md: 0.65rem;
+  --radius-lg: 0.9rem;
+  --radius-xl: 1.25rem;
+
+  /* v2 内容容器背景：原为完全不透明的 --v2-background-bg-*（#13141e / #10111a），
+     撑满视口把底层背景图盖死。这里改为半透明（alpha 复用 --anime-shell-alpha），
+     让二次元图透出；layer-01/02 若存在则逐层略减透明度，保证所有层都透背景 */
+  --v2-background-bg-base: rgba(19, 20, 30, var(--anime-shell-alpha));
+  --v2-background-bg-deep: rgba(16, 17, 26, var(--anime-shell-alpha));
+  --v2-background-bg-layer-01: rgba(19, 20, 30, calc(var(--anime-shell-alpha) - 0.05));
+  --v2-background-bg-layer-02: rgba(16, 17, 26, calc(var(--anime-shell-alpha) - 0.10));
+  /* 审查面板（diffs-container，shadow DOM）diff 区域背景：
+     shadow 内 :host 背景 = var(--color-background-stronger) = #10111a 完全不透明，
+     且 --diffs-bg 默认 var(--color-background-stronger)。
+     两个变量都覆盖为半透明（CSS 变量可穿透 shadow DOM），
+     背景图才能透过审查面板 diff 区域透出来 */
+  --color-background-stronger: rgba(16, 17, 26, var(--anime-shell-alpha));
+  --opencode-diffs-bg: rgba(16, 17, 26, var(--anime-shell-alpha));
+  /* diff 视图：新增 = 绿 / 删除 = 红（VSCode 风格，Dracula 官方色板）。
+     【重要】实际 diff 行渲染在 shadow DOM（<diffs-container>）里，
+     使用 --diffs-* 变量体系，其中文字色引用 --syntax-diff-*：
+       --diffs-addition-color: var(--syntax-diff-add)
+       --diffs-deletion-color: var(--syntax-diff-delete)
+     oc-theme 默认 --syntax-diff-add: #5beaff（蓝）、-delete: #fec3be（浅红），
+     所以必须覆盖 --syntax-diff-*（CSS 自定义属性会穿透 shadow DOM）。
+     旧的 --text-diff-* / --surface-diff-* 是无效变量，保留仅为兼容 */
+  --text-diff-add-base: #50FA7B;
+  --text-diff-add-strong: #9FFFBF;
+  --text-diff-delete-base: #FF5555;
+  --text-diff-delete-strong: #FF8A8A;
+  /* shadow DOM diff 行的真实文字色变量（关键修复） */
+  --syntax-diff-add: #50FA7B;
+  --syntax-diff-delete: #FF5555;
+  --surface-diff-add-weaker: rgba(80, 250, 123, 0.06);
+  --surface-diff-add-weak: rgba(80, 250, 123, 0.09);
+  --surface-diff-add-base: rgba(80, 250, 123, 0.12);
+  --surface-diff-add-strong: rgba(80, 250, 123, 0.18);
+  --surface-diff-add-stronger: rgba(80, 250, 123, 0.25);
+  --surface-diff-delete-weaker: rgba(255, 85, 85, 0.06);
+  --surface-diff-delete-weak: rgba(255, 85, 85, 0.09);
+  --surface-diff-delete-base: rgba(255, 85, 85, 0.12);
+  --surface-diff-delete-strong: rgba(255, 85, 85, 0.18);
+  --surface-diff-delete-stronger: rgba(255, 85, 85, 0.25);
+}
+
+/* ---------- 2. 随机二次元背景层（固定全屏 + 低透明度，永不遮挡文字） ---------- */
+/* 兜底：背景服务不可达时，html 自身即纯色 #282A36 */
+html {
+  background-color: #282A36;
+}
+/* 背景层必须用 body::before 而不是 html::before：
+   html::before（z-index:-1）绘制在 body 背景之下，会被 body 的
+   半透明背景盖住导致图完全不可见；body::before 绘制在 body 背景
+   之上、内容之下，图才能真正透出来 */
+body {
+  position: relative;
+  background-color: rgba(40, 42, 54, var(--anime-shell-alpha)) !important;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;                 /* 在 body 背景之上、内容之下 */
+  pointer-events: none;        /* 不拦截任何交互 */
+  /* 背景图：默认走 CSS 变量（由 Tampermonkey 脚本注入带时间戳的 URL 保证随机）；
+     未注入时回退到固定 URL（会被缓存 30 天，不换图） */
+  background-image: var(--anime-bg, url("https://t.alcy.cc/pc/"));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* 想要更“贴图感”弱一点、与底色融合更深，可取消下面这行注释：
+     background-blend-mode: soft-light; */
+  opacity: var(--anime-bg-opacity, 0.40);
+  filter: saturate(1.1);       /* 提鲜 */
+}
+
+/* 审查面板（Review）空状态：tabs 及内容容器多层嵌套复用 --v2-background-bg-base
+   （每层 0.32），5 层叠加后背景图被稀释到 ~8%。在 #review-panel 作用域内把
+   v2 背景变量统一降为 --anime-review-alpha（0.12），抵消多层叠加，
+   恢复 ~20%+ 可见，与对话界面观感一致。侧栏 session-review-v2-sidebar
+   （0.62 + blur）不用 v2 变量，不受影响 */
+#review-panel {
+  --v2-background-bg-base: rgba(19, 20, 30, var(--anime-review-alpha, 0.12));
+  --v2-background-bg-deep: rgba(16, 17, 26, var(--anime-review-alpha, 0.12));
+  --v2-background-bg-layer-01: rgba(19, 20, 30, var(--anime-review-alpha, 0.12));
+  --v2-background-bg-layer-02: rgba(16, 17, 26, var(--anime-review-alpha, 0.12));
+}
+/* 变量继承对 opencode 的 Tailwind 背景类（bg-v2-background-*）不可靠
+   （实测 computed 仍是全局 0.32），改为直接覆盖背景压过 Tailwind 规则；
+   排除侧栏（session-review-v2-sidebar，0.62 + blur 保持现状） */
+#review-panel [class*="bg-v2-background"]:not([data-slot="session-review-v2-sidebar"]) {
+  background-color: rgba(19, 20, 30, var(--anime-review-alpha, 0.12)) !important;
+}
+/* 审查面板容器（aside#review-panel）自身：默认 bg-v2-background-bg-base 0.62 + blur(14px)，
+   盖在内部所有半透明容器之上，把背景图稀释+模糊。降低自身背景、去掉 blur，
+   让内部内容区透出背景图；侧栏 session-review-v2-sidebar 保持 0.62+blur 不动 */
+#review-panel {
+  background-color: rgba(19, 20, 30, var(--anime-review-alpha, 0.12)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* 审查面板侧栏（session-review-v2-sidebar，240px 文件树）：默认 0.62 + blur 不透背景，
+   统一降为半透明，与审查面板主体一致透出背景图 */
+[data-slot="session-review-v2-sidebar"] {
+  background-color: rgba(19, 20, 30, var(--anime-review-alpha, 0.12)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ---------- 3. 基础点缀：选区 / 链接 / 焦点 / 滚动条 ---------- */
+::selection {
+  background: rgba(255, 121, 198, 0.35);
+  color: #F8F8F2;
+}
+
+a { color: #8BE9FD; }
+a:hover { color: #FF79C6; }
+
+:focus-visible {
+  outline: 2px solid rgba(189, 147, 249, 0.75);
+  outline-offset: 1px;
+}
+
+input[type="checkbox"],
+input[type="radio"] { accent-color: #FF79C6; }
+
+/* 滚动条：隐藏原生条，由 opencode 自定义 DOM 滚动条（scroll-view__thumb）接管 */
+/* 原生条与自定义 thumb 会重叠显示两条，故全部隐藏；滚动功能不受影响 */
+* {
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+}
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: transparent; }
+
+/* 美化 opencode 自定义滚动条：单条纤细紫粉胶囊（原 12px 太粗 → 6px） */
+.scroll-view__thumb,
+[data-slot*="thumb"],
+[data-slot*="scrollbar"] [data-slot*="thumb"] {
+  background: linear-gradient(180deg, #BD93F9, #FF79C6) !important;
+  border-radius: 9999px;
+}
+/* 竖向：宽 4px（组件默认 12px 太粗；opencode 的 thumb 可能无 data-orientation，
+   故不用属性选择器，直接设宽度，避免规则不匹配） */
+.scroll-view__thumb,
+[data-slot*="thumb"] {
+  width: 4px !important;
+  max-width: 4px !important;
+}
+/* 横向：高 4px，渐变转水平 */
+.scroll-view__thumb[data-orientation="horizontal"],
+[data-slot*="thumb"][data-orientation="horizontal"] {
+  height: 4px !important;
+  max-height: 4px !important;
+  background: linear-gradient(90deg, #BD93F9, #FF79C6) !important;
+}
+/* 组件默认灰色细条（thumb::after，4px）叠在粉色条上 → 透明隐藏，只留一条紫粉 */
+.scroll-view__thumb::after,
+[data-slot*="thumb"]::after {
+  background: transparent !important;
+}
+/* hover / 拖动激活时亮粉 */
+.scroll-view__thumb:hover,
+.scroll-view__thumb[data-state="active"],
+.scroll-view__thumb[data-dragging="true"],
+[data-slot*="thumb"]:hover,
+[data-slot*="thumb"][data-dragging="true"] {
+  background: #FF79C6 !important;
+}
+/* 轨道：默认透明，hover 时浮现细轨提示可滚动 */
+.scroll-view__track:hover,
+[data-slot*="track"]:hover {
+  background: rgba(68, 71, 90, 0.45);
+}
+
+/* ---------- 4. 毛玻璃：侧栏 / 弹层 / 对话框 / 菜单 ---------- */
+[data-slot="sidebar"],
+[data-slot="sidebar-inset"],
+aside {
+  background: rgba(40, 42, 54, 0.62) !important;
+  backdrop-filter: blur(var(--anime-glass-blur)) saturate(1.2);
+  -webkit-backdrop-filter: blur(var(--anime-glass-blur)) saturate(1.2);
+}
+
+[data-slot="dropdown-menu-content"],
+[data-slot="context-menu-content"],
+[data-slot="popover-content"],
+[data-slot="dialog-content"],
+[data-slot="sheet-content"],
+[data-slot="tooltip-content"],
+[data-component="session-tab-popover"],
+[role="dialog"],
+[role="menu"],
+[role="listbox"] {
+  background: rgba(40, 42, 54, 0.82) !important;
+  backdrop-filter: blur(var(--anime-glass-blur)) saturate(1.2);
+  -webkit-backdrop-filter: blur(var(--anime-glass-blur)) saturate(1.2);
+  border: 1px solid rgba(189, 147, 249, 0.25) !important;
+}
+
+/* ---------- 5. 输入框：半透明玻璃底 + 聚焦粉色霓虹光 ---------- */
+textarea,
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"] {
+  background: rgba(40, 42, 54, 0.55) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(189, 147, 249, 0.30) !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+textarea:focus,
+input:focus {
+  border-color: #FF79C6 !important;
+  box-shadow: 0 0 0 1px rgba(255, 121, 198, 0.35), 0 0 16px rgba(255, 121, 198, 0.18);
+}
+
+/* 聊天输入框（contenteditable）本体必须保持透明：
+   否则半透明背景 + backdrop-filter 会盖住并模糊底下的 placeholder 文字 */
+[contenteditable="true"] {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+/* 玻璃效果改到包裹输入框的容器上（form），placeholder 才露得出来 */
+form:has(> [data-component="prompt-input"]),
+form:has(> div > [data-component="prompt-input"]) {
+  background: rgba(40, 42, 54, 0.55) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(189, 147, 249, 0.30) !important;
+  border-radius: 10px;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+form:has(> [data-component="prompt-input"]:focus-within),
+form:has(> div > [data-component="prompt-input"]:focus-within) {
+  border-color: #FF79C6 !important;
+  box-shadow: 0 0 0 1px rgba(255, 121, 198, 0.35), 0 0 16px rgba(255, 121, 198, 0.18);
+}
+/* placeholder 提亮：原文案用 --v2-text-text-faint (#8990b1)，换用更亮的 muted 色保证可读 */
+[contenteditable="true"] + .pointer-events-none {
+  color: #a3abd2 !important;
+}
+
+/* ---------- 6. 按钮：hover 粉色霓虹边框 + 微光 ---------- */
+button {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+              background-color 0.18s ease, color 0.18s ease;
+}
+button:hover:not(:disabled) {
+  border-color: rgba(255, 121, 198, 0.55) !important;
+  box-shadow: 0 0 0 1px rgba(255, 121, 198, 0.20), 0 0 12px rgba(255, 121, 198, 0.15);
+}
+
+/* ---------- 7. 顶部会话标签（tabs） ---------- */
+[data-slot="tabs-trigger"] {
+  color: #6272A4;
+  transition: color 0.15s ease;
+}
+[data-slot="tabs-trigger"]:hover { color: #F8F8F2; }
+[data-slot="tabs-trigger"][data-state="active"] {
+  color: #FF79C6;
+  box-shadow: inset 0 -2px 0 #FF79C6;   /* 激活：粉色下划线 */
+}
+[data-slot="tabs-trigger-close-button"] {
+  color: #6272A4;
+  border-radius: 6px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+[data-slot="tabs-trigger-close-button"]:hover {
+  color: #FF5555;
+  background: rgba(255, 85, 85, 0.14);
+}
+
+/* ---------- 8. 会话列表行：hover / 激活 紫色高亮 + 左侧霓虹边 ---------- */
+[data-component="session-tab"] {
+  border-radius: 8px;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+[data-component="session-tab"]:hover {
+  background: rgba(189, 147, 249, 0.12);
+  box-shadow: inset 2px 0 0 rgba(189, 147, 249, 0.7);
+}
+[data-component="session-tab"][data-active="true"],
+[data-component="session-tab"][aria-selected="true"] {
+  background: rgba(189, 147, 249, 0.16);
+  box-shadow: inset 2px 0 0 #FF79C6;
+}
+
+/* ---------- 9. 消息区分：user 紫 / assistant 深色
+       基于 opencode 渲染的 data-role 属性；未命中则无副作用 ---------- */
+[data-role="user"] {
+  background: rgba(189, 147, 249, 0.10);
+  border: 1px solid rgba(189, 147, 249, 0.22);
+  border-radius: 10px;
+}
+[data-role="assistant"] {
+  background: rgba(40, 42, 54, 0.55);
+  border: 1px solid rgba(68, 71, 90, 0.5);
+  border-radius: 10px;
+}
+
+/* ---------- 10. 代码块：Dracula+ 深底 + 左侧紫边 ---------- */
+pre {
+  background-color: #21222C !important;   /* 比面板更深的代码底 */
+  border: 1px solid rgba(68, 71, 90, 0.6);
+  border-left: 3px solid #BD93F9;
+  border-radius: 8px;
+}
+code { background-color: rgba(189, 147, 249, 0.12); }
+pre code { background-color: transparent; }
+/* 若 opencode 用 shiki 注入 --shiki-* 变量，一并覆盖为 Dracula 基底 */
+pre {
+  --shiki-background: #21222C;
+  --shiki-foreground: #F8F8F2;
+}
+
+/* ---------- 11. Markdown 细节：标题 / 引用 ---------- */
+h1 { color: #FF79C6; }
+h2, h3 { color: #BD93F9; }
+blockquote {
+  border-left: 3px solid #FF79C6;
+  background: rgba(255, 121, 198, 0.07);
+}
